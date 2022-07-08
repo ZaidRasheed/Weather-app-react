@@ -6,17 +6,21 @@ function Gadget(props) {
         return s && s[0].toUpperCase() + s.slice(1);
     }
     const [expanded, setExpanded] = useState("");
+
+    const [error, setError] = useState("");
+
+    const [searched, setSearched] = useState(false);
+
     useEffect(() => {
         setExpanded(props.icon === null ? "" : "expanded")
-
-    }, [props.icon])
+        setError(props.icon === null && searched ? "404 Error location not found" : "")
+    }, [props.icon,searched])
     const element = (
         <div>
-            {expanded === "expanded" ? null :
-                <div className="error">
-                    <h1>404 Error invalid location</h1>
-                </div>
-            }
+            <div className="error">
+                <span>{error}</span>
+            </div>
+
             <div id="expand-container">
                 <div className={`main ${expanded}`} id="expand-contract">
                     <div>
@@ -65,7 +69,10 @@ function Gadget(props) {
                             <span className="field__label">City name</span>
                         </span>
                     </div>
-                    <button className="button bySearchButton" onClick={props.bySearch} >Search</button>
+                    <button className="button bySearchButton" onClick={()=>{
+                        props.bySearch();
+                        setSearched(true);
+                    }} >Search</button>
                 </div>
                 <div className="byCurrentlLocation">
                     <button className="button" onClick={props.getCurrentLocation}>Current location</button>
