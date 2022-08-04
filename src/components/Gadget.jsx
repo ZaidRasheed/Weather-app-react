@@ -5,15 +5,19 @@ function Gadget(props) {
     function capitalize(s) {
         return s && s[0].toUpperCase() + s.slice(1);
     }
-    const [expanded, setExpanded] = useState("");
 
     const [error, setError] = useState("");
 
     const [searched, setSearched] = useState(false);
 
     useEffect(() => {
-        setExpanded(props.icon === null ? "" : "expanded")
         setError(props.icon === null && searched ? "Error location not found" : "")
+        if(props.icon === null && searched){
+            document.getElementById("expand-container").classList.add("hidden");
+        }
+        else{
+            document.getElementById("expand-container").classList.remove("hidden");
+        }
     }, [props.icon, searched])
     const element = (
         <div>
@@ -30,7 +34,7 @@ function Gadget(props) {
                         <input
                             onChange={(event) => {
                                 const { value } = event.target;
-                                props.setcityNameSearch(value);
+                                props.setCityNameSearch(value);
                             }}
                             type="text"
                             name="city"
@@ -52,15 +56,15 @@ function Gadget(props) {
                 </div>
             </div>
             <div id="expand-container">
-                <div className={`main ${expanded}`} id="expand-contract">
+                <div className="main" >
                     <div>
                         <div className="level1">
                             <div className="img">
-                                <img alt="weather icon" src={`https://openweathermap.org/img/wn/${props.icon}@4x.png`} />
+                            {props.icon === null?"":<img alt="weather icon" src={`https://openweathermap.org/img/wn/${props.icon}@4x.png`} />}
                             </div>
                             <div className="basic">
                                 <h1>{props.cityName}, {props.country}</h1>
-                                <span className="temp">{parseFloat(props.temp).toFixed(1)}°</span>
+                                <span className="temp">{parseFloat(props.temp).toFixed(1)} °</span>
                             </div>
 
                         </div>
@@ -69,7 +73,7 @@ function Gadget(props) {
                                 {capitalize(props.description)}
                             </h2>
                             <h2>
-                                Real feel {parseFloat(props.feels_like).toFixed(1)}°
+                                Real feel {parseFloat(props.feels_like).toFixed(1)} °
                             </h2>
                         </div>
                     </div>

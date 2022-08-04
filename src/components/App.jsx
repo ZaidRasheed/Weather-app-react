@@ -9,12 +9,12 @@ function App() {
         long: null
     });
 
-    const [cityNameSearch, setcityNameSearch] = useState("");
+    const [cityNameSearch, setCityNameSearch] = useState("");
     const [data, setData] = useState({
-        city: null,
-        country: null,
-        feels_like: null,
-        temp: null,
+        city: "NA",
+        country: "NA",
+        feels_like: "NA",
+        temp: "NA",
         icon: null,
 
     });
@@ -162,7 +162,7 @@ function App() {
             country={data.country}
             feels_like={data.feels_like}
             cityNameSearch={cityNameSearch}
-            setcityNameSearch={setcityNameSearch}
+            setCityNameSearch={setCityNameSearch}
             bySearch={bySearch}
             icon={data.icon}
             temp={data.temp}

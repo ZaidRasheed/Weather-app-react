@@ -2,12 +2,6 @@ body{
   background-color: #EEEEEE;
   font-family: "open sans";
 }
-#expand-contract {
-  visibility: hidden;
-}
-#expand-contract.expanded {
-  visibility: visible;
-}
 .error{
   height: 30px;
   width: 60%;
@@ -100,7 +94,9 @@ img{
 .byCurrentlLocation>button{
   height: 100%;
 }
-
+.hidden{
+  display: none;
+}
 
 
 
