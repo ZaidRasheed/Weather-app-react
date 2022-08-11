@@ -52,7 +52,10 @@ function Gadget(props) {
                     }} >Search</button>
                 </div>
                 <div className="byCurrentlLocation">
-                    <button className="button" onClick={props.getCurrentLocation}>Current location</button>
+                    <button className="button" onClick={()=>{
+                        props.getCurrentLocation();
+                        props.setCityNameSearch("");
+                        }}>Current location</button>
                 </div>
             </div>
             <div id="expand-container">
