@@ -5,11 +5,11 @@ body{
 .error{
   height: 30px;
   width: 60%;
-  margin: 20px auto 0;
+  margin: 20px auto 60px;
   text-align: center;
   color: #06283D;
   font-weight: 600;
-  font-size: 2rem;
+  font-size: 1.5rem;
 }
 .main{
   overflow: hidden;
