@@ -46,7 +46,17 @@ function App() {
                             description: response.list[0].weather[0].description,
                         }
                     })
-                    setCurrentLocationData(data);
+                    setCurrentLocationData(()=>{
+                        return {
+                            city: response.city.name,
+                            country: response.city.country,
+                            feels_like: response.list[0].main.feels_like,
+                            icon: response.list[0].weather[0].icon,
+                            temp: response.list[0].main.temp,
+                            description: response.list[0].weather[0].description,
+                        }
+                    });
+                    
                 }).catch(err => {
                     if (err.response || err.request) {
                         setData(() => {
