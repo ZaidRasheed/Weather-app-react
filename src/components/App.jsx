@@ -4,12 +4,16 @@ import Gadget from "./Gadget";
 
 function App() {
 
-    const [loc, setLoc] = useState({
-        lat: null,
-        long: null
-    });
-
     const [cityNameSearch, setCityNameSearch] = useState("");
+
+    const [currentLocationData, setCurrentLocationData] = useState({
+        city: "NA",
+        country: "NA",
+        feels_like: "NA",
+        temp: "NA",
+        icon: null,
+    })
+
     const [data, setData] = useState({
         city: "NA",
         country: "NA",
@@ -21,12 +25,6 @@ function App() {
     useEffect(() => {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(position => {
-                setLoc(() => {
-                    return {
-                        long: position.coords.longitude,
-                        lat: position.coords.latitude
-                    }
-                })
                 axios({
                     method: "get",
                     url: "https://api.openweathermap.org/data/2.5/forecast",
@@ -36,19 +34,19 @@ function App() {
                         appid: process.env.REACT_APP_apiId,
                         units: "metric"
                     },
-
                 }).then(res => {
-                    let data = res.data;
+                    let response = res.data;
                     setData(() => {
                         return {
-                            city: data.city.name,
-                            country: data.city.country,
-                            feels_like: data.list[0].main.feels_like,
-                            icon: data.list[0].weather[0].icon,
-                            temp: data.list[0].main.temp,
-                            description: data.list[0].weather[0].description,
+                            city: response.city.name,
+                            country: response.city.country,
+                            feels_like: response.list[0].main.feels_like,
+                            icon: response.list[0].weather[0].icon,
+                            temp: response.list[0].main.temp,
+                            description: response.list[0].weather[0].description,
                         }
                     })
+                    setCurrentLocationData(data);
                 }).catch(err => {
                     if (err.response || err.request) {
                         setData(() => {
@@ -61,60 +59,56 @@ function App() {
                             }
                         })
                     }
-
                 })
             });
         }
     }, [])
 
-
-
     function getCurrentLocation() {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(position => {
-                setLoc(() => {
-                    return {
-                        long: position.coords.longitude,
-                        lat: position.coords.latitude
-                    }
-                })
-                axios({
-                    method: "get",
-                    url: "https://api.openweathermap.org/data/2.5/forecast",
-                    params: {
-                        lat: position.coords.latitude,
-                        lon: position.coords.longitude,
-                        appid: process.env.REACT_APP_apiId,
-                        units: "metric"
-                    },
+        if (currentLocationData.city !== "NA") {
+            setData(currentLocationData);
+        }
+        else {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(position => {
+                    axios({
+                        method: "get",
+                        url: "https://api.openweathermap.org/data/2.5/forecast",
+                        params: {
+                            lat: position.coords.latitude,
+                            lon: position.coords.longitude,
+                            appid: process.env.REACT_APP_apiId,
+                            units: "metric"
+                        },
 
-                }).then(res => {
-                    let data = res.data;
-                    setData(() => {
-                        return {
-                            city: data.city.name,
-                            country: data.city.country,
-                            feels_like: data.list[0].main.feels_like,
-                            icon: data.list[0].weather[0].icon,
-                            temp: data.list[0].main.temp,
-                            description: data.list[0].weather[0].description,
-                        }
-                    })
-                }).catch(err => {
-                    if (err.response || err.request) {
+                    }).then(res => {
+                        let response = res.data;
                         setData(() => {
                             return {
-                                city: null,
-                                country: null,
-                                feels_like: null,
-                                icon: null,
-                                temp: null,
+                                city: response.city.name,
+                                country: response.city.country,
+                                feels_like: response.list[0].main.feels_like,
+                                icon: response.list[0].weather[0].icon,
+                                temp: response.list[0].main.temp,
+                                description: response.list[0].weather[0].description,
                             }
                         })
-                    }
-
-                })
-            });
+                        setCurrentLocationData(data);
+                    }).catch(err => {
+                        if (err.response || err.request) {
+                            setData(() => {
+                                return {
+                                    city: null,
+                                    country: null,
+                                    feels_like: null,
+                                    icon: null,
+                                    temp: null,
+                                }
+                            })
+                        }
+                    })
+                });
+            }
         }
     }
 
@@ -127,7 +121,6 @@ function App() {
                 appid: process.env.REACT_APP_apiId,
                 units: "metric"
             },
-
         }).then(res => {
             let data = res.data;
             setData(() => {
