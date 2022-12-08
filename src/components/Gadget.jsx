@@ -1,94 +1,69 @@
-import React, { useEffect, useState } from "react";
+import { useRef } from "react";
 
-function Gadget(props) {
+function capitalize(s) {
+    return s && s[0].toUpperCase() + s.slice(1);
+}
 
-    function capitalize(s) {
-        return s && s[0].toUpperCase() + s.slice(1);
+function Gadget({ data, error, bySearch, setError }) {
+
+    const cityName = useRef()
+    
+    const handleSubmit = (e) => {
+        e.preventDefault()
+
+        if (!cityName.current.value.trim())
+            return setError('Please provide a valid location')
+        
+        bySearch(cityName.current.value);
     }
 
-    const [error, setError] = useState("");
+    const weekday = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
-    const [searched, setSearched] = useState(false);
-
-    useEffect(() => {
-        setError(props.icon === null && searched ? "Error location not found" : "")
-        if(props.icon === null && searched){
-            document.getElementById("expand-container").classList.add("hidden");
-        }
-        else{
-            document.getElementById("expand-container").classList.remove("hidden");
-        }
-    }, [props.icon, searched])
-    const element = (
+    return (
         <div>
-            <div className="error">
-                <p>{error}</p>
-            </div>
             <div className="bottom">
-
                 <div className="bySearch">
-                    <div className="field field_v1">
-                        <label htmlFor="first-name" className="ha-screen-reader">
-                            city name
-                        </label>
-                        <input
-                            onChange={(event) => {
-                                const { value } = event.target;
-                                props.setCityNameSearch(value);
-                            }}
-                            type="text"
-                            name="city"
-                            value={props.cityNameSearch}
-                            id="first-name"
-                            className="field__input"
-                            placeholder="e.g. Paris" />
-                        <span className="field__label-wrap" aria-hidden="true">
-                            <span className="field__label">City name</span>
-                        </span>
-                    </div>
-                    <button className="button bySearchButton" onClick={() => {
-                        props.bySearch();
-                        setSearched(true);
-                    }} >Search</button>
-                </div>
-                <div className="byCurrentlLocation">
-                    <button className="button" onClick={()=>{
-                        props.getCurrentLocation();
-                        props.setCityNameSearch("");
-                        }}>Current location</button>
-                </div>
-            </div>
-            <div id="expand-container">
-                <div className="main" >
-                    <div>
-                        <div className="level1">
-                            <div className="img">
-                            {props.icon === null?"":<img alt="weather icon" src={`https://openweathermap.org/img/wn/${props.icon}@4x.png`} />}
-                            </div>
-                            <div className="basic">
-                                <h1>{props.cityName}, {props.country}</h1>
-                                <span className="temp">{parseFloat(props.temp).toFixed(1)} °</span>
-                            </div>
-
+                    <form onSubmit={handleSubmit}>
+                        <div className="field field_v1">
+                            <label htmlFor="first-name" className="ha-screen-reader">
+                                city name
+                            </label>
+                            <input
+                                type="text"
+                                name="city"
+                                ref={cityName}
+                                id="first-name"
+                                className="field__input"
+                                placeholder="e.g. Paris" />
+                            <span className="field__label-wrap" aria-hidden="true">
+                                <span className="field__label">City name</span>
+                            </span>
                         </div>
-                        <div className="level2">
-                            <h2>
-                                {capitalize(props.description)}
-                            </h2>
-                            <h2>
-                                Real feel {parseFloat(props.feels_like).toFixed(1)} °
-                            </h2>
-                        </div>
-                    </div>
-
+                        <button className="button bySearchButton" type="submit">Search</button>
+                    </form>
                 </div>
             </div>
 
+            {error ?
+                <div className="error">
+                    {error}
+                </div>
+                :
+                <article className="box weather">
+                    <div className="icon">
+                        {data.icon && <img alt="weather icon" src={`https://openweathermap.org/img/wn/${data.icon}@4x.png`} />}
+                    </div>
 
-        </div>
+                    <span style={{ marginTop: '10px' }} className="high-low">{capitalize(data.description)}</span>
+                    <h1>{weekday[new Date().getDay()]}</h1>
+
+                    <span className="temp">{parseFloat(data.temp).toFixed(1)}&deg;</span>
+                    <span className="high-low">{data.min.toFixed(1)}&deg; - {data.max.toFixed(1)}&deg;</span>
+                    <span className="high-low">{data.city}, {data.country}</span>
+                </article>
+            }
+        </div >
     )
-
-    return element;
 }
 
 export default Gadget;
